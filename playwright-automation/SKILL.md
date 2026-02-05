@@ -103,7 +103,14 @@ with sync_playwright() as p:
 # Wait for element to appear
 page.wait_for_selector('.dynamic-content')
 
+# Preferred for scraping: fast and reliable
+page.wait_for_load_state('domcontentloaded')
+page.wait_for_timeout(2000)  # short wait for JS rendering
+
 # Wait for network to be idle
+# WARNING: unreliable on ad-heavy/news sites — trackers and ads
+# make continuous requests, causing networkidle to time out.
+# Prefer domcontentloaded + short timeout for scraping.
 page.wait_for_load_state('networkidle')
 
 # Wait for specific timeout
@@ -174,6 +181,28 @@ Prefer selectors in this order:
 3. Specific classes: `.submit-btn`
 4. Text content: `text="Submit"`
 5. XPath as last resort: `//button[@type="submit"]`
+
+### Cookie/Consent Banners
+
+Modern sites often have cookie consent banners or overlays that contain heading elements and buttons. These can interfere with content extraction (e.g., grabbing banner text instead of the actual headline).
+
+```python
+# Strategy 1: Dismiss the banner first
+try:
+    page.locator('button:has-text("Accept"), button:has-text("Reject"), button:has-text("Close")').first.click(timeout=3000)
+except:
+    pass  # No banner present
+
+# Strategy 2: Scope selectors to main content area, skipping overlays
+content = page.locator('main h1, article h1, #content h1').first.text_content()
+
+# Strategy 3: Filter out banner-related text when iterating elements
+for el in page.locator('h1, h2').all():
+    text = el.text_content().strip()
+    if text and 'cookie' not in text.lower() and 'opt out' not in text.lower():
+        print(text)
+        break
+```
 
 ## Common Use Cases
 

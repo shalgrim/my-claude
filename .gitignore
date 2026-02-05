@@ -8,9 +8,6 @@ env/
 venv/
 *.egg-info/
 
-# Packaged skills (generated files)
-*.skill
-
 # Authentication state (contains credentials)
 auth.json
 *.json

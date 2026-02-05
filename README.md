@@ -59,23 +59,23 @@ ls -la ~/.claude/skills
 
 ### 3. Set Up for Claude.ai (Web/Desktop)
 
-#### Install the Packaging Script Dependencies
+**When to do this:** Only when you want to use a skill in claude.ai web or the Claude Desktop app. If you only use Claude Code (CLI), you can skip this entirely.
 
-First, ensure you have Python available. Then navigate to the skill-creator examples:
+#### Package the Skill
 
-```bash
-# The packaging script is available in Claude's skill-creator examples
-# You can use it directly from there or copy it to your repo
-```
-
-#### Package a Skill
+You need to create a `.skill` file (which is just a zip with a `.skill` extension). Use the packaging script:
 
 ```bash
-# Package the skill into a .skill file (which is just a zip with .skill extension)
-python /mnt/skills/examples/skill-creator/scripts/package_skill.py ~/repos/claude-skills/playwright-automation
+# Navigate to your repo
+cd ~/repos/claude-skills
+
+# Package the skill (this validates and creates a .skill file)
+python /mnt/skills/examples/skill-creator/scripts/package_skill.py playwright-automation
 
 # This creates playwright-automation.skill in the current directory
 ```
+
+**Note:** The packaging script is available in Claude's skill-creator examples. You'll need Python available to run it.
 
 #### Upload to Claude.ai
 
@@ -85,8 +85,10 @@ python /mnt/skills/examples/skill-creator/scripts/package_skill.py ~/repos/claud
 4. Ensure **Code execution and file creation** is enabled
 5. Scroll to **Skills** section
 6. Click **Upload skill**
-7. Upload the `playwright-automation.skill` file
-8. The skill is now available in both Claude.ai web and Claude Desktop app
+7. Upload the `playwright-automation.skill` file you just created
+8. The skill is now available in both Claude.ai web and Claude Desktop app automatically
+
+**Important:** The `.skill` file is disposable - you can delete it after uploading. Your source of truth is the `claude-skills/` repo folder.
 
 ## Adding New Machines
 
@@ -126,6 +128,8 @@ git pull
 
 ### For Claude.ai (Web/Desktop)
 
+**Only needed if:** You use the skill in claude.ai web/desktop AND you've made changes you want reflected there.
+
 After updating a skill in the repo:
 
 ```bash
@@ -135,8 +139,9 @@ python /mnt/skills/examples/skill-creator/scripts/package_skill.py playwright-au
 
 # 2. Re-upload to Claude.ai
 # Go to Settings > Capabilities > Skills
-# Remove old version (click X)
-# Upload new .skill file
+# Click the X to remove the old version
+# Click "Upload skill" and select the new .skill file
+# Delete the .skill file (it's just a temporary artifact)
 ```
 
 ## Creating New Skills
